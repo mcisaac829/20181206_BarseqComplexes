@@ -1,24 +1,5 @@
----
-title: "ComplexAnalysis"
-output:
-  pdf_document: default
-  html_document: default
----
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## Barseq analysis
-
-Bar-seq is used to find potentially long-lived strains.
-
-In this analysis, we use protein complexes to look at the coherence of enrichment patterns across envrionmentalconditions.
-
-
-
-```{r load}
-setwd("/Volumes/GoogleDrive/My Drive/Projects/BARSeq/")
+setwd("/Volumes/GoogleDrive/My Drive/Projects/BARSeq/ProteinComplexAnalysis/")
 #libraries
 library('org.Sc.sgd.db')
 xx= as.list(org.Sc.sgdCOMMON2ORF)
@@ -30,12 +11,6 @@ names(common)=orf
 library(devtools)
 library(Biobase)
 library(preprocessCore)
-
-```
-
-## Grab data, quantile normalize, and plot
-
-```{r pressure}
 
 
 
@@ -51,10 +26,14 @@ datagrab <- function(x,complex,mydata){
 }
 
 #datasets
-barseq <- read.delim(file="/Volumes/GoogleDrive/My Drive/Projects/BARSeq/allBarSeq_20181112.txt",sep="\t",header=TRUE)
+barseq <- read.delim(file="/Volumes/GoogleDrive/My Drive/Projects/BARSeq/ProteinComplexAnalysis/allBarSeq_20181112.txt",sep="\t",header=TRUE)
 complexes <- read.delim(file="/Volumes/GoogleDrive/My Drive/genome_data/Yeast/Datasets/yeastcomplexes.txt",sep="\t",header=FALSE)
 complexes$V5 <- paste0("complex",seq(1:dim(complexes)[1]))
 complexes <- complexes[,c(5,1,2,3,4)]
+
+
+
+
 
 #in bar-seq data, convert names to systematic
 barseq$systematic <- as.vector(yy[as.vector(barseq$gene)])
@@ -64,6 +43,9 @@ rmlist <- barseq$systematic[duplicated(barseq$systematic)] #get dups
 barseq <-barseq[!(barseq$systematic %in% rmlist),] #remove dups
 
 barseqYORF <- data.frame(YORF = barseq$systematic,barseq[,2:8])
+
+#check a few of the systematic gene names
+
 
 
 #####quantile normalize
@@ -82,11 +64,7 @@ data_norm <- cbind(barseqYORF[,1],data_norm)
 colnames(data_norm)[1] ="YORF"
 barseqYORF = data_norm
 
-```
 
-Calculate scores for complexes, as well as the fraction of complex components present in dataset
-
-```{r next}
 #get protein complex size vector
 Total <- dim(complexes)[1]
 ComplexesOnly <- complexes$V3
@@ -99,7 +77,7 @@ for(i in 1:Total){
 complexes$Size <- ComplexesSize
 
 BigComplexes <- complexes[complexes$Size > 4,]
-BigComplexes[colnames(barseqYORF[2:8])] = ""
+BigComplexes[colnames(barseqYORF[2:8])] = "" #colnames are experiments with and no data
 BigComplexes["InData"] = as.numeric("")
 BigComplexes["FracInData"] = as.numeric("")
 BigComplexesOnly <- BigComplexes$V3
@@ -124,4 +102,14 @@ BigComplexes <- BigComplexes[,c(1,3,4,5,13,7:12,2,6,14,15)]
 #write.table(BigComplexes,file="barseq_scores_quantilnormalize.txt",sep="\t",col.names=NA)
 #########Get data for specific complex
 datagrab("complex131",complexes,barseqYORF)
-```
+
+
+
+
+L = 4
+v <- c()
+for(i in 1:(L-1)){
+  for(j in (i+1):L){
+    v <- c(v,print(paste0("compare",i,j)))
+  }
+}
