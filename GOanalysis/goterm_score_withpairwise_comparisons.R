@@ -16,10 +16,48 @@ sysmissing_positions <- is.na(data$systematic)
 data$systematic[sysmissing_positions] = as.vector(data$gene[sysmissing_positions])
 rmlist <- data$systematic[duplicated(data$systematic)] #get dups
 data <-data[!(data$systematic %in% rmlist),] #remove dups
-
 return(data)
-
 }
+
+#function for comparing data before and after adding systematic name
+RowTest <- function(d,d_ref,tests){ #d: barseq2, d_ref = barseq, test = 50
+
+d_ref <- barseq
+d <- barseq2
+
+X = dim(d)[1]
+Y = dim(d_ref)[2]
+row_pick <- sample(X,tests,replace=F)
+
+d_selected <- d[row_pick,] #from data that includes systematic names
+
+counter = 0
+for(i in 1:tests){
+  V <- d_ref[d_ref$gene %in% d_selected[i,]$gene,] #data for gene i from reference dataset
+  
+  #get rid of NAs and replace with 9000
+  V[is.na(V)] <- 9000
+  d_selected[i,][is.na(d_selected[i,])] <- 9000
+  
+  #test for matching
+  Score <- sum(d_selected[i,1:Y] == V[1:Y])
+  if(Score == Y){
+    counter = counter + 1
+  }
+}
+
+if(counter == tests){
+  print("PASSES")}
+
+
+if(counter != tests){
+  print("FAILS")}
+}
+
+
+#end of functions
+######################################################
+######################################################
 
 
 library(tidyverse)
@@ -41,6 +79,9 @@ samples <- c(1,1,1,2,3,4,5) #label replicates here
 
 #add systematic gene names to data
 barseq2 <- AddSystematic(barseq)
+
+#Check that data matches after adding systematic names
+RowTest(barseq,barseq2,150)
 
 #list of GO terms
 GOtib <- as.tibble(GO)
@@ -136,6 +177,7 @@ for(m in 1:length(GOlist)){
   }
 
   counter = 1
+
 #populate avg_data_pairwise dataframe
   for(i in 1:(length(uniquesamples)-1)){k
     for(j in (i+1):(length(uniquesamples))){
