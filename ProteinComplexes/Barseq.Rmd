@@ -37,8 +37,6 @@ library(preprocessCore)
 
 ```{r pressure}
 
-
-
 datagrab <- function(x,complex,mydata){
   dat <- complex[complex$V5==x,]$V3
   genes <- gsub(" ","",strsplit(as.vector(dat),";")[[1]])
