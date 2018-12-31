@@ -1,3 +1,14 @@
+---
+title: "go_term_analysis"
+author: "Scott McIsaac"
+date: "12/30/2018"
+output: pdf_document
+---
+
+```{r setup, include=TRUE}
+
+## R Markdown
+
 #functions
 ######################################################
 ######################################################
@@ -277,9 +288,5 @@ MyMeans %>%
 
 
 
-
-
-
-
-
+```
 
