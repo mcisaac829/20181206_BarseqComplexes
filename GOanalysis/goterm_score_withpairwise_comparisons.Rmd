@@ -1,8 +1,10 @@
 ---
-title: "go_term_analysis"
+title: "GO coherence analysis of BAR-seq data"
 author: "Scott McIsaac"
 date: "12/30/2018"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=TRUE}

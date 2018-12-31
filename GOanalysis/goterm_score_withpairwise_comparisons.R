@@ -231,6 +231,8 @@ pairwise_tidy <- gather(MyMeans_Pairwise,sample,value,-GO)
 pairwise_tidy$value <- as.vector(sapply(pairwise_tidy$value, as.numeric))
 pairwise_tidy <- as.tibble(pairwise_tidy)
 
+
+#Get data for GO terms that have a coherence score of abs > 0.8
 pairwise_tidyfilter <- pairwise_tidy %>% filter(abs(value) > 0.8) 
 
 d <- pairwise_tidyfilter %>% count(GO) %>% 
